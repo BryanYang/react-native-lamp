@@ -31,29 +31,33 @@ const GpropsOn = {
   fill: '#c4d8d9',
 }
 
+const hexToRgba = (hex, opacity) => { 
+  return "rgba(" + parseInt("0x" + hex.slice(1, 3)) + "," + parseInt("0x" + hex.slice(3, 5)) + "," + parseInt("0x" + hex.slice(5, 7)) + "," + opacity + ")"; 
+}
+
 export default class Lamp extends React.Component {
    
   constructor(props){
     super(props)
     this.state = {
       on: false,
+      color: '#ff0022',
     }
     this.click = this.click.bind(this);
   }
 
-  /*
+  
   componentWillReceiveProps(next){
-     this.setState({
-       on: next.On, 
-     }) 
+    if(next.color){
+      this.setState({
+        color: next.color
+      })
+    }
   }
-  */
+  
 
   click(){
-    const opacity = this.state.on ? 0 : 0.5;
-    const opacity1 = this.state.on ? 0 : 0.2;
-    this.refs.glow.transitionTo({opacity: this.state.on ? 0 : 0.2 }, 800, 'ease-in-out')
-    this.refs.flare.transitionTo({opacity, }, 600, 'ease-in-out');
+    this.refs.glow.transitionTo({opacity: this.state.on ? 0 : 1 }, 800, 'ease-in-out')
     this.props.onPress && this.props.onPress();
     this.setState({
       on: !this.state.on,
@@ -149,9 +153,8 @@ export default class Lamp extends React.Component {
         </G>
       </Svg>
       <Animatable.View ref="glow" style={styles.glow}>
-        <RadialGradient colors={['rgba(255,223,67,1)', 'rgba(255,223,67,0) 70%)']} style={styles.radial}></RadialGradient> 
+        <RadialGradient colors={[hexToRgba(this.state.color, 0.5), hexToRgba(this.state.color, 0)]} style={styles.radial}></RadialGradient> 
       </Animatable.View>
-      <Animatable.View ref="flare" style={styles.flare}></Animatable.View>
       <TouchableWithoutFeedback onPress={this.click}>
         <View style={styles.lamp}/>
       </TouchableWithoutFeedback> 
@@ -187,6 +190,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 100,
+    overflow: 'hidden',
     top: '50%',
     left: '50%',
     transform: [{translateX: -100}, {translateY : -100}],

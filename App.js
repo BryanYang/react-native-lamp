@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Container, Header, Content, Footer, FooterTab, Button, Icon } from 'native-base';
 import RadialGradient  from 'react-native-radial-gradient';
-import { ColorPicker } from 'react-native-color-picker'
+import All, { ColorPicker, toHsv, fromHsv } from 'react-native-color-picker';
 
 import Lamp from './mods/lamp';
 
@@ -33,13 +33,21 @@ export default class AwesomeProject extends React.Component {
     super(props)
     this.state = {
       lampOn: false,
+      color: '',
     }
     this.lampClick = this.lampClick.bind(this)
+    this.colorChange = this.colorChange.bind(this);
   }
 
   lampClick(){
     this.setState({
       lampOn: !this.state.lampOn,
+    })
+  }
+
+  colorChange(v){
+    this.setState({
+      color: fromHsv(v)
     })
   }
 
@@ -53,11 +61,11 @@ export default class AwesomeProject extends React.Component {
             <View >
               {
                 this.state.lampOn ? <ColorPicker
-                onColorSelected={color => console.log(`Color selected: ${color}`)}
+                onColorChange={this.colorChange}
                 style={styles.colorPicker}
               /> : <View/>
               }
-              <Lamp style={styles.lamp} On={this.state.lampOn} onPress={this.lampClick}/>
+              <Lamp style={styles.lamp} On={this.state.lampOn} color={this.state.color} onPress={this.lampClick}/>
             </View>
           </RadialGradient>
           <View>
